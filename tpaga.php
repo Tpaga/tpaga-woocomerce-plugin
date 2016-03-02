@@ -33,6 +33,7 @@ function woocommerce_tpaga_gateway() {
       $this->merchant_token = $this->settings['merchant_token'];
       $this->public_api_key = $this->settings['public_api_key'];
       $this->gateway_url = $this->settings['gateway_url'];
+      $this->merchant_secret = $this->settings['merchant_secret'];
       $this->test = $this->settings['test'];
       $this->response_page = $this->settings['response_page'];
       $this->confirmation_page = $this->settings['confirmation_page'];
@@ -70,6 +71,10 @@ function woocommerce_tpaga_gateway() {
                     'description' => __('Identificador único de merchant en Tpaga.', 'tpaga')),
                 'public_api_key' => array(
                     'title' => __('Public API Key', 'tpaga'),
+                    'type' => 'text',
+                    'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')),
+                'merchant_secret' => array(
+                    'title' => __('Secreto', 'tpaga'),
                     'type' => 'text',
                     'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')),
                 'gateway_url' => array(
@@ -127,7 +132,7 @@ function woocommerce_tpaga_gateway() {
       $order = new WC_Order( $order_id );
       $currency = get_woocommerce_currency();
       $amount = number_format(($order -> get_total()),2,'.','');
-      $signature = hash('sha256', $this -> merchant_token . $amount . $order -> id);
+      $signature = hash('sha256', $this -> merchant_token . round($amount, 0) . $order -> id . $this -> merchant_secret);
       $description = "";
       $products = $order->get_items();
       foreach($products as $product) {
@@ -141,34 +146,33 @@ function woocommerce_tpaga_gateway() {
       if($this->test == 'yes') $test = 1;
       
       $parameters_args = array(
-        'merchantId' => $this->merchant_token,
-        'referenceCode' => $order -> id,
-        'description' => trim($description, ','),
-        'amount' => $amount,
-        'tax' => $tax,
-        'taxReturnBase' => $taxReturnBase,
-        'signature' => $signature,
-        'currency' => $currency,
-        'buyerEmail' => $order -> billing_email,
-        'test' => $test,
-        'confirmationUrl' => $this->confirmation_page,
-        'responseUrl' => $this->response_page,
-        'shippingAddress' => $order->shipping_address_1,
-        'shippingCountry' => $order->shipping_country,
-        'shippingCity' => $order->shipping_city,
-        'billingAddress' => $order->billing_address_1,
-        'billingCountry' => $order->billing_country,
-        'billingCity' => $order->billing_city,
-        'extra1' => 'WOOCOMMERCE'
+        'merchant_token' => $this->merchant_token,
+        'purchase_order_id' => $order -> id,
+        'purchase_description' => trim($description, ','),
+        'purchase_amount' => round($amount, 0),
+        'purchase_tax' => $tax,
+        'purchase_signature' => $signature,
+        'purchase_currency' => $currency,
+        'customer_firstname' => $order->billing_first_name,
+        'customer_lastname' => $order->billing_last_name,
+        'customer_phone' => $order->billing_phone,
+        'customer_cellphone' => $order->billing_phone,
+        'customer_email' => $order->billing_email,
+
+        'address_street' => $order->shipping_address_1,
+        'address_city' => $order->shipping_city,
+        'address_country' => $order->shipping_country,
+        'address_state' => $order->billing_state,
+        'address_postal_code' => $order->billing_postcode,
       );
       return $parameters_args;
     }
         
     /**
      * Metodo que genera el formulario con los datos de pago
-         *
-         * @access public
-         * @return void
+     *
+     * @access public
+     * @return void
      */
     public function generate_tpaga_form($order_id){     
       $parameters_args = $this->get_params_post($order_id);
@@ -189,9 +193,9 @@ function woocommerce_tpaga_gateway() {
     
     /**
      * Procesa el pago 
-         *
-         * @access public
-         * @return void
+     *
+     * @access public
+     * @return void
      */
     function process_payment($order_id) {
       global $woocommerce;
@@ -221,8 +225,8 @@ function woocommerce_tpaga_gateway() {
     /**
      * Retorna la configuracion del api key
      */
-    function get_public_api_key() {
-      return $this->settings['public_api_key'];
+    function find_merchant_secret() {
+      return $this->settings['merchant_secret'];
     }
   }
 

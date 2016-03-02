@@ -38,6 +38,9 @@ function woocommerce_tpaga_gateway() {
       $this->response_page = $this->settings['response_page'];
       $this->confirmation_page = $this->settings['confirmation_page'];
       
+      // Verifica certificados SSL
+      add_action( 'admin_notices', array( $this,  'do_ssl_check' ) );
+
       if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=' )) {
                 add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
              } else {
@@ -127,7 +130,7 @@ function woocommerce_tpaga_gateway() {
      * @access public
      * @return void
      */
-    public function get_params_post($order_id){
+    public function get_params_post( $order_id ){
       global $woocommerce;
       $order = new WC_Order( $order_id );
       $currency = get_woocommerce_currency();
@@ -174,17 +177,17 @@ function woocommerce_tpaga_gateway() {
      * @access public
      * @return void
      */
-    public function generate_tpaga_form($order_id){     
-      $parameters_args = $this->get_params_post($order_id);
+    public function generate_tpaga_form( $order_id ){     
+      $parameters_args = $this->get_params_post( $order_id );
       
       $tpaga_args_array = array();
-      foreach($parameters_args as $key => $value){
+      foreach( $parameters_args as $key => $value ){
         $tpaga_args_array[] = $key . '=' . $value;
       }
       $params_post = implode('&', $tpaga_args_array);
 
       $tpaga_args_array = array();
-      foreach($parameters_args as $key => $value){
+      foreach( $parameters_args as $key => $value ){
         $tpaga_args_array[] = "<input type='hidden' name='purchase[$key]' value='$value'/>";
       }
       return '<form action="'.$this->gateway_url.'" method="post" id="tpaga_form">' . implode('', $tpaga_args_array) 
@@ -197,17 +200,18 @@ function woocommerce_tpaga_gateway() {
      * @access public
      * @return void
      */
-    function process_payment($order_id) {
+    function process_payment( $order_id ) {
       global $woocommerce;
-      $order = new WC_Order($order_id);
+      $order = new WC_Order( $order_id );
       $woocommerce->cart->empty_cart();
+
       if (version_compare(WOOCOMMERCE_VERSION, '2.0.19', '<=' )) {
         return array('result' => 'success', 'redirect' => add_query_arg('order',
           $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))))
         );
       } else {
       
-        $parameters_args = $this->get_params_post($order_id);
+        $parameters_args = $this->get_params_post( $order_id );
         
         $tpaga_args_array = array();
         foreach($parameters_args as $key => $value){
@@ -230,10 +234,19 @@ function woocommerce_tpaga_gateway() {
     }
   }
 
+  // Verifica si estamos forzando SSL on la pagina de cobro
+  function do_ssl_check() {
+    if( $this->enabled == "yes" ) {
+      if( get_option( 'woocommerce_force_ssl_checkout' ) == "no" ) {
+        echo "<div class=\"error\"><p>". sprintf( __( "<strong>%s</strong> is enabled and WooCommerce is not forcing the SSL certificate on your checkout page. Please ensure that you have a valid SSL certificate and that you are <a href=\"%s\">forcing the checkout pages to be secured.</a>" ), $this->method_title, admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ) ."</p></div>";  
+      }
+    }   
+  }
+
   /**
    * Ambas funciones son utilizadas para notifcar a WC la existencia de Tpaga
    */
-  function add_tpaga($methods) {
+  function add_tpaga( $methods ) {
     $methods[] = 'Tpaga';
     return $methods;
   }

@@ -37,9 +37,6 @@ function woocommerce_tpaga_gateway() {
       $this->test = $this->settings['test'];
       $this->response_page = $this->settings['response_page'];
       $this->confirmation_page = $this->settings['confirmation_page'];
-      
-      // Verifica certificados SSL
-      add_action( 'admin_notices', array( $this,  'do_ssl_check' ) );
 
       if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=' )) {
                 add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
@@ -232,15 +229,6 @@ function woocommerce_tpaga_gateway() {
     function find_merchant_secret() {
       return $this->settings['merchant_secret'];
     }
-  }
-
-  // Verifica si estamos forzando SSL on la pagina de cobro
-  function do_ssl_check() {
-    if( $this->enabled == "yes" ) {
-      if( get_option( 'woocommerce_force_ssl_checkout' ) == "no" ) {
-        echo "<div class=\"error\"><p>". sprintf( __( "<strong>%s</strong> is enabled and WooCommerce is not forcing the SSL certificate on your checkout page. Please ensure that you have a valid SSL certificate and that you are <a href=\"%s\">forcing the checkout pages to be secured.</a>" ), $this->method_title, admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ) ."</p></div>";  
-      }
-    }   
   }
 
   /**

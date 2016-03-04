@@ -27,11 +27,11 @@ if ($recievedSignature == $signature) {
   $order = new WC_Order($purchaseOrderId);
   // Test the code to know if the transaction went through or not.
   if ($paymentState == 'paid' && $responseMessage == 'Successful payment process!'){
-    $order->add_order_note( __( 'Tpaga payment completed.', 'tpaga' ) );
+    $order->add_order_note( __( 'Pago satisfactorio.', 'tpaga' ) );
     $order->payment_complete();
     echo $responseMessage;
   } else{
     wc_add_notice( $responseMessage, 'error');
-    $order->add_order_note('Error ' . $responseMessage);
+    $order->add_order_note('Error: ' . $responseMessage);
   }
 }

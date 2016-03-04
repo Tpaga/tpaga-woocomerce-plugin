@@ -2,11 +2,12 @@
 /*
 Plugin Name: Tpaga - WooCommerce Gateway
 Plugin URI: http://www.tpaga.co/
-Description: Extends WooCommerce by Adding the Tpaga Web Checkout.
+Description: Extiende Woocommerce agregando Tpaga WebCheckout como metodo de pagos.
 Version: 1.0
 Author: Tpaga
 Author URI: http://www.tpaga.co/
 */
+
 add_action('plugins_loaded', 'woocommerce_tpaga_gateway', 0);
 function woocommerce_tpaga_gateway() {
   if(!class_exists('WC_Payment_Gateway')) return;
@@ -15,7 +16,7 @@ function woocommerce_tpaga_gateway() {
 
     public function __construct(){
       $this->id         = 'tpaga';
-      $this->icon         = apply_filters('woocomerce_tpagalatam_icon', plugins_url('/img/logotpaga.png', __FILE__));
+      $this->icon         = apply_filters('woocomerce_tpagalatam_icon', plugins_url('/img/tpaga-logo.png', __FILE__));
       $this->has_fields     = false;
       $this->method_title     = 'Tpaga';
       $this->method_description = 'Integración de Woocommerce con Tpaga Web checkout';
@@ -26,17 +27,18 @@ function woocommerce_tpaga_gateway() {
       $this->title = $this->settings['title'];
       $this->merchant_token = $this->settings['merchant_token'];
       $this->public_api_key = $this->settings['public_api_key'];
-      $this->gateway_url = $this->settings['gateway_url'];
+      $this->environment_url = '';
       $this->merchant_secret = $this->settings['merchant_secret'];
       $this->test = $this->settings['test'];
       $this->response_page = $this->settings['response_page'];
       $this->confirmation_page = $this->settings['confirmation_page'];
 
       if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=' )) {
-                add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
-             } else {
-                add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
-            }
+        add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
+      } else {
+        add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
+      }
+
       add_action('woocommerce_receipt_tpaga', array(&$this, 'receipt_page'));
     }
     
@@ -68,11 +70,6 @@ function woocommerce_tpaga_gateway() {
                     'title' => __('Secreto', 'tpaga'),
                     'type' => 'text',
                     'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')
-                    ),
-        'gateway_url' => array(
-                    'title' => __('Gateway URL', 'tpaga'),
-                    'type' => 'text',
-                    'description' => __('URL de la pasarela de pago tpaga Latam.', 'tpaga')
                     ),
         'test' => array(
                     'title' => __('Transacciones en modo de prueba', 'tpaga'),
@@ -108,20 +105,20 @@ function woocommerce_tpaga_gateway() {
     public function get_params_post( $order_id ){
       global $woocommerce;
       $order = new WC_Order( $order_id );
+
       $currency = get_woocommerce_currency();
-      $amount = number_format(($order -> get_total()),2,'.','');
+      $amount = number_format(($order -> get_total()), 2, '.', '');
       $signature = hash('sha256', $this -> merchant_token . round($amount, 0) . $order -> id . $this -> merchant_secret);
       $description = "";
       $products = $order->get_items();
+
       foreach($products as $product) {
         $description .= $product['name'] . ',';
       }
+
       $tax = number_format(($order -> get_total_tax()),2,'.','');
       $taxReturnBase = number_format(($amount - $tax),2,'.','');
       if ($tax == 0) $taxReturnBase = 0;
-      
-      $test = 0;
-      if($this->test == 'yes') $test = 1;
       
       $parameters_args = array(
         'merchant_token' => $this->merchant_token,
@@ -142,6 +139,7 @@ function woocommerce_tpaga_gateway() {
         'address_state' => $order->billing_state,
         'address_postal_code' => $order->billing_postcode,
       );
+
       return $parameters_args;
     }
         
@@ -160,11 +158,11 @@ function woocommerce_tpaga_gateway() {
       }
 
       $environment = ( $this->test == "yes" ) ? 'TRUE' : 'FALSE';
-      $this->gateway_url = ( "FALSE" == $environment ) 
+      $this->environment_url = ( "FALSE" == $environment ) 
                            ? 'http://tpaga-webcheckout.herokuapp.com/checkout'
                            : 'http://localhost:3000/checkout';
 
-      return '<form action="'.$this->gateway_url.'" method="post" id="tpaga_form">' . implode('', $tpaga_args_array) 
+      return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpaga_args_array) 
         . '<input type="submit" id="submit_tpaga" value="' .__('Pagar', 'tpaga').'" /></form>';
     }
     
@@ -174,9 +172,11 @@ function woocommerce_tpaga_gateway() {
       $woocommerce->cart->empty_cart();
 
       if (version_compare(WOOCOMMERCE_VERSION, '2.0.19', '<=' )) {
-        return array('result' => 'success', 'redirect' => add_query_arg('order',
-          $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))))
-        );
+        return array('result' => 'success',
+                     'redirect' => add_query_arg('order',
+                     $order->id,
+                     add_query_arg( 'key', $order->order_key, get_permalink( get_option('woocommerce_pay_page_id'))))
+                    );
       } else {
       
         $parameters_args = $this->get_params_post( $order_id );

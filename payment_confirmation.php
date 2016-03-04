@@ -57,16 +57,16 @@ if ($recievedSignature == $signature) {
         <td><?php echo $description; ?></td>
       </tr>
       <tr align="right">
-        <td>Entidad</td>
+        <td>Metodo de pago</td>
         <td><?php echo $paymentMethod; ?></td>
       </tr>
       <tr align="right">
-        <td>Entidad</td>
+        <td>N&uacute;mero de cuotas</td>
         <td><?php echo $installments; ?></td>
       </tr>
     </table>
     <p/>
-    <h1><?php echo "HOLA QUE HACE" ?></h1>
+    <h1><?php echo "Su pago ha sido procesado satisfactoriamente. Gracias por su compra." ?></h1>
   </center>
 <?php
 } else {

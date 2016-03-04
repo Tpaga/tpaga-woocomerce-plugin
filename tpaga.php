@@ -13,12 +13,6 @@ function woocommerce_tpaga_gateway() {
 
   class Tpaga extends WC_Payment_Gateway {
 
-    /**
-     * Constructor de la pasarela de pago
-     *
-     * @access public
-     * @return void
-     */
     public function __construct(){
       $this->id         = 'tpaga';
       $this->icon         = apply_filters('woocomerce_tpagalatam_icon', plugins_url('/img/logotpaga.png', __FILE__));
@@ -46,62 +40,59 @@ function woocommerce_tpaga_gateway() {
       add_action('woocommerce_receipt_tpaga', array(&$this, 'receipt_page'));
     }
     
-    /**
-     * Funcion que define los campos que iran en el formulario en la configuracion
-     * de la pasarela de tpaga Latam
-     *
-     * @access public
-     * @return void
-     */
     function init_form_fields() {
       $this->form_fields = array(
         'enabled' => array(
                     'title' => __('Habilitar/Deshabilitar', 'tpaga'),
                     'type' => 'checkbox',
                     'label' => __('Habilitar pago por medio de Tpaga Web Checkout', 'tpaga'),
-                    'default' => 'no'),
-                'title' => array(
+                    'default' => 'no'
+                    ),
+        'title' => array(
                     'title' => __('Título', 'tpaga'),
                     'type'=> 'text',
                     'description' => __('Título que el usuario verá durante checkout.', 'tpaga'),
-                    'default' => __('Tpaga WebCheckout', 'tpaga')),
-                'merchant_token' => array(
+                    'default' => __('Tpaga WebCheckout', 'tpaga')
+                    ),
+        'merchant_token' => array(
                     'title' => __('Merchant Token', 'tpaga'),
                     'type' => 'text',
-                    'description' => __('Identificador único de merchant en Tpaga.', 'tpaga')),
-                'public_api_key' => array(
+                    'description' => __('Identificador único de merchant en Tpaga.', 'tpaga')
+                    ),
+        'public_api_key' => array(
                     'title' => __('Public API Key', 'tpaga'),
                     'type' => 'text',
-                    'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')),
-                'merchant_secret' => array(
+                    'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')
+                    ),
+        'merchant_secret' => array(
                     'title' => __('Secreto', 'tpaga'),
                     'type' => 'text',
-                    'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')),
-                'gateway_url' => array(
+                    'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')
+                    ),
+        'gateway_url' => array(
                     'title' => __('Gateway URL', 'tpaga'),
                     'type' => 'text',
-                    'description' => __('URL de la pasarela de pago tpaga Latam.', 'tpaga')),
+                    'description' => __('URL de la pasarela de pago tpaga Latam.', 'tpaga')
+                    ),
         'test' => array(
                     'title' => __('Transacciones en modo de prueba', 'tpaga'),
                     'type' => 'checkbox',
                     'label' => __('Habilita las transacciones en modo de prueba.', 'tpaga'),
                     'default' => 'no'),
-                'response_page' => array(
+        'response_page' => array(
                     'title' => __('Página de respuesta'),
                     'type' => 'text',
                     'description' => __('URL de la página mostrada después de finalizar el pago. No olvide cambiar su dominio.', 'tpaga'),
-          'default' => __('http://su.dominio.com/wp-content/plugins/woocommerce-tpaga-latam-2.0/response.php', 'tpaga')),
-                'confirmation_page' => array(
+                    'default' => __('http://su.dominio.com/wp-content/plugins/woocommerce-tpaga/process_response.php', 'tpaga')),
+                    'confirmation_page' => array(
                     'title' => __('Página de confirmación'),
                     'type' => 'text',
                     'description' => __('URL de la página que recibe la respuesta definitiva sobre los pagos. No olvide cambiar su dominio.', 'tpaga'),
-          'default' => __('http://su.dominio.com/wp-content/plugins/woocommerce-tpaga-latam-2.0/confirmation.php', 'tpaga'))
+                    'default' => __('http://su.dominio.com/wp-content/plugins/woocommerce-tpaga/confirmation.php', 'tpaga')
+                    )
       );
     }
     
-    /**
-    * Muestra el fomrulario en el admin con los campos de configuracion del gateway tpaga Latam
-    */
     public function admin_options() {
       echo '<h3>'.__('Tpaga Web Checkout', 'tpaga').'</h3>';
       echo '<table class="form-table">';
@@ -109,24 +100,11 @@ function woocommerce_tpaga_gateway() {
       echo '</table>';
     }
     
-    /**
-     * Atiende el evento de checkout y genera la pagina con el formularion de pago.
-     * Solo para la versiones anteriores a la 2.1.0 de WC
-     *
-     * @access public
-     * @return void
-     */
     function receipt_page($order){
       echo '<p>'.__('Gracias por su pedido, para continuar con el pago haga click el botón.', 'tpaga').'</p>';
       echo $this -> generate_tpaga_form($order);
     }
     
-    /**
-     * Construye un arreglo con todos los parametros que seran enviados al gateway de tpaga
-     *
-     * @access public
-     * @return void
-     */
     public function get_params_post( $order_id ){
       global $woocommerce;
       $order = new WC_Order( $order_id );
@@ -158,7 +136,6 @@ function woocommerce_tpaga_gateway() {
         'customer_phone' => $order->billing_phone,
         'customer_cellphone' => $order->billing_phone,
         'customer_email' => $order->billing_email,
-
         'address_street' => $order->shipping_address_1,
         'address_city' => $order->shipping_city,
         'address_country' => $order->shipping_country,
@@ -168,12 +145,6 @@ function woocommerce_tpaga_gateway() {
       return $parameters_args;
     }
         
-    /**
-     * Metodo que genera el formulario con los datos de pago
-     *
-     * @access public
-     * @return void
-     */
     public function generate_tpaga_form( $order_id ){     
       $parameters_args = $this->get_params_post( $order_id );
       
@@ -187,16 +158,16 @@ function woocommerce_tpaga_gateway() {
       foreach( $parameters_args as $key => $value ){
         $tpaga_args_array[] = "<input type='hidden' name='purchase[$key]' value='$value'/>";
       }
+
+      $environment = ( $this->test == "yes" ) ? 'TRUE' : 'FALSE';
+      $this->gateway_url = ( "FALSE" == $environment ) 
+                           ? 'http://tpaga-webcheckout.herokuapp.com/checkout'
+                           : 'http://localhost:3000/checkout';
+
       return '<form action="'.$this->gateway_url.'" method="post" id="tpaga_form">' . implode('', $tpaga_args_array) 
         . '<input type="submit" id="submit_tpaga" value="' .__('Pagar', 'tpaga').'" /></form>';
     }
     
-    /**
-     * Procesa el pago 
-     *
-     * @access public
-     * @return void
-     */
     function process_payment( $order_id ) {
       global $woocommerce;
       $order = new WC_Order( $order_id );
@@ -223,17 +194,12 @@ function woocommerce_tpaga_gateway() {
       }
     }
     
-    /**
-     * Retorna la configuracion del api key
-     */
     function find_merchant_secret() {
       return $this->settings['merchant_secret'];
     }
   }
 
-  /**
-   * Ambas funciones son utilizadas para notifcar a WC la existencia de Tpaga
-   */
+
   function add_tpaga( $methods ) {
     $methods[] = 'Tpaga';
     return $methods;

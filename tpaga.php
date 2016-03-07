@@ -144,7 +144,7 @@ function woocommerce_tpaga_gateway() {
       // Campos que convertirán en nombre y valor del input
       $parametersArgs = array(
         'merchant_token' => $this->merchant_token,
-        'purchase_orderId' => $order -> id,
+        'purchase_order_id' => $order -> id,
         'purchase_description' => trim($description, ','),
         'purchase_amount' => round($amount, 0),
         'purchase_tax' => $tax,

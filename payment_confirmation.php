@@ -13,7 +13,6 @@ $responseMessage =  $_REQUEST['payment_message'];
 $paymentMethod =  $_REQUEST['payment_method'];
 $currency =  $_REQUEST['purchase_currency'];
 $description =  $_REQUEST['purchase_description'];
-$installments =  $_REQUEST['installments'];
 
 $tpaga = new Tpaga;
 
@@ -59,10 +58,6 @@ if ($recievedSignature == $signature) {
       <tr align="right">
         <td>Metodo de pago</td>
         <td><?php echo $paymentMethod; ?></td>
-      </tr>
-      <tr align="right">
-        <td>N&uacute;mero de cuotas</td>
-        <td><?php echo $installments; ?></td>
       </tr>
     </table>
     <p/>

@@ -6,6 +6,9 @@ Description: Agrega Tpaga WebCheckout como metodo de pago.
 Version: 1.0
 Author: Tpaga
 Author URI: http://www.tpaga.co/
+GitHub Plugin URI: https://github.com/angelleye/paypal-woocommerce
+License: Apache License 2.0.
+License URI: http://www.apache.org/licenses/LICENSE-2.0
 */
 
 add_action('plugins_loaded', 'woocommerce_tpaga_gateway', 0);

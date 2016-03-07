@@ -26,7 +26,7 @@ function woocommerce_tpaga_gateway() {
       $this->id         = 'tpaga';
 
       // Icono que será mostrado al momento de escoger medio de pagos
-      $this->icon         = apply_filters('woocomerce_tpagalatam_icon', plugins_url('/img/tpaga-logo.png', __FILE__));
+      $this->icon         = apply_filters('woocomerce_tpaga_icon', plugins_url('/img/tpaga-logo.png', __FILE__));
 
       // Bool. Puede ser configurada con true si se esta haciendo una integración directa.
       // este no es nuestro caso, ya el proceso se terminará por medio de un tercero
@@ -84,7 +84,7 @@ function woocommerce_tpaga_gateway() {
         'merchant_secret' => array(
           'title' => __('Secreto', 'tpaga'),
           'type' => 'text',
-          'description' => __('Llave que sirve para encriptar la comunicación con tpaga Latam.', 'tpaga')
+          'description' => __('Llave que sirve para encriptar la comunicación con Tpaga WebCheckout.', 'tpaga')
         ),
         'test' => array(
           'title' => __('Transacciones en modo de prueba', 'tpaga'),
@@ -93,7 +93,7 @@ function woocommerce_tpaga_gateway() {
           'default' => 'no'
         ),
         'response_page' => array(
-          'title' => __('Página de respuesta'),
+          'title' => __('URI de respuesta'),
           'type' => 'text',
           'description' => __('URL de la página mostrada al finalizar el pago.', 'tpaga'),
           'default' => __('http://cambiame.com/wp-content/plugins/woocommerce-tpaga/process_response.php', 'tpaga')),

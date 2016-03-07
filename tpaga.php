@@ -121,9 +121,8 @@ function woocommerce_tpaga_gateway() {
     }
     
     // Configura los datos que serán luego renderizados como un formulario
-    public function get_params_post( $order_id ){
-      global $woocommerce;
-      $order = new WC_Order( $order_id );
+    public function get_params_post( $orderId ){
+      $order = new WC_Order( $orderId );
 
       $currency = get_woocommerce_currency();
       $amount = number_format(($order -> get_total()), 2, '.', '');
@@ -143,9 +142,9 @@ function woocommerce_tpaga_gateway() {
       if ($tax == 0) $taxReturnBase = 0;
       
       // Campos que convertirán en nombre y valor del input
-      $parameters_args = array(
+      $parametersArgs = array(
         'merchant_token' => $this->merchant_token,
-        'purchase_order_id' => $order -> id,
+        'purchase_orderId' => $order -> id,
         'purchase_description' => trim($description, ','),
         'purchase_amount' => round($amount, 0),
         'purchase_tax' => $tax,
@@ -163,22 +162,21 @@ function woocommerce_tpaga_gateway() {
         'address_postal_code' => $order->billing_postcode,
       );
 
-      return $parameters_args;
+      return $parametersArgs;
     }
     
     // Genera el formulario "Botón" de pago
-    public function generate_tpaga_form( $order_id ){     
-      $parameters_args = $this->get_params_post( $order_id );
+    public function generate_tpaga_form( $orderId ){     
+      $parametersArgs = $this->get_params_post( $orderId );
       
-      $tpaga_args_array = array();
-      foreach( $parameters_args as $key => $value ){
-        $tpaga_args_array[] = $key . '=' . $value;
+      $tpagaArgs = array();
+      foreach( $parametersArgs as $key => $value ){
+        $tpagaArgs[] = $key . '=' . $value;
       }
-      $params_post = implode('&', $tpaga_args_array);
 
-      $tpaga_args_array = array();
-      foreach( $parameters_args as $key => $value ){
-        $tpaga_args_array[] = "<input type='hidden' name='purchase[$key]' value='$value'/>";
+      $tpagaArgs = array();
+      foreach( $parametersArgs as $key => $value ){
+        $tpagaArgs[] = "<input type='hidden' name='purchase[$key]' value='$value'/>";
       }
 
       // Url de Tpaga dependiendo del ambiente en el que nos encontremos
@@ -188,14 +186,14 @@ function woocommerce_tpaga_gateway() {
                            : 'http://localhost:3000/checkout';
 
       // Escribimos en el navegador nuestro botón
-      return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpaga_args_array) 
+      return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpagaArgs) 
         . '<input type="submit" id="submit_tpaga" value="' .__('Pagar', 'tpaga').'" /></form>';
     }
     
     // Procesa el pago e informa a WC del mismo.
-    function process_payment( $order_id ) {
+    function process_payment( $orderId ) {
       global $woocommerce;
-      $order = new WC_Order( $order_id );
+      $order = new WC_Order( $orderId );
 
       // Paso importantisímo ya que vacia el carrito
       $woocommerce->cart->empty_cart();
@@ -209,13 +207,12 @@ function woocommerce_tpaga_gateway() {
                     );
       } else {
       
-        $parameters_args = $this->get_params_post( $order_id );
+        $parametersArgs = $this->get_params_post( $orderId );
         
-        $tpaga_args_array = array();
-        foreach($parameters_args as $key => $value){
-          $tpaga_args_array[] = $key . '=' . $value;
+        $tpagaArgs = array();
+        foreach($parametersArgs as $key => $value){
+          $tpagaArgs[] = $key . '=' . $value;
         }
-        $params_post = implode('&', $tpaga_args_array);
       
         return array(
           'result' => 'success',

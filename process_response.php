@@ -19,7 +19,7 @@ $installments = $data['installments'];
 $tpaga = new Tpaga;
 
 $merchantSecret = $tpaga->find_merchant_secret();
-// merchant_token purchase_amount purchase_order_id id state merchant.secret
+
 $message = $merchantToken . $purchaseAmount . $purchaseOrderId . $purchaseId . $paymentState . $merchantSecret;
 $signature = hash('sha256', $message);
 

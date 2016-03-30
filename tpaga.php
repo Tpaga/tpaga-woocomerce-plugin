@@ -23,24 +23,24 @@ function woocommerce_tpaga_gateway() {
     public function __construct(){
 
       // ID global para este metodo de pago
-      $this->id         = 'tpaga';
+      $this->id = 'tpaga';
 
       // Icono que será mostrado al momento de escoger medio de pagos
-      $this->icon         = apply_filters('woocomerce_tpaga_icon', plugins_url('/img/tpaga-logo.png', __FILE__));
+      $this->icon = apply_filters('woocomerce_tpaga_icon', plugins_url('/img/tpaga-logo.png', __FILE__));
 
       // Bool. Puede ser configurada con true si se esta haciendo una integración directa.
       // este no es nuestro caso, ya el proceso se terminará por medio de un tercero
       $this->has_fields     = false;
       $this->method_title     = 'Tpaga';
       $this->method_description = 'Integración de Woocommerce con Tpaga Web checkout';
-      
+
       // Define la configuracion que luego serán cargadas con init_settings()
       $this->init_form_fields();
 
       // Luego que init_settings() es llamado, es posible guardar la configuracion en variables
       // e.j: $this->get_option( 'title' );
       $this->init_settings();
-      
+
       // Convertimos settings en variables que podemos utilizar
       $this->title = $this->get_option( 'title' );
       $this->merchant_token = $this->get_option( 'merchant_token' );
@@ -60,7 +60,7 @@ function woocommerce_tpaga_gateway() {
 
       add_action('woocommerce_receipt_tpaga', array(&$this, 'receipt_page'));
     }
-    
+
     // Formulario de configuración Tpaga WebCheckout
     function init_form_fields() {
       $this->form_fields = array(
@@ -105,7 +105,7 @@ function woocommerce_tpaga_gateway() {
         )
       );
     }
-    
+
     // Crea el formulario de administrador
     public function admin_options() {
       echo '<h3>'.__('Tpaga Web Checkout', 'tpaga').'</h3>';
@@ -113,13 +113,13 @@ function woocommerce_tpaga_gateway() {
       $this -> generate_settings_html();
       echo '</table>';
     }
-    
+
     // Muestra el botón de pago, que luego redirecciona a TW
     function receipt_page($order){
       echo '<p>'.__('Gracias por su pedido, Hagá click en PAGAR para proceder con el pago.', 'tpaga').'</p>';
       echo $this -> generate_tpaga_form($order);
     }
-    
+
     // Configura los datos que serán luego renderizados como un formulario
     public function get_params_post( $orderId ){
       $order = new WC_Order( $orderId );
@@ -140,8 +140,8 @@ function woocommerce_tpaga_gateway() {
       $tax = number_format(($order -> get_total_tax()),2,'.','');
       $taxReturnBase = number_format(($amount - $tax),2,'.','');
       if ($tax == 0) $taxReturnBase = 0;
-      
-      // Campos que convertirán en nombre y valor del input
+
+      // Campos que convertirán los datos del botón de pago
       $parametersArgs = array(
         'merchant_token' => $this->merchant_token,
         'purchase_order_id' => $order -> id,
@@ -164,11 +164,11 @@ function woocommerce_tpaga_gateway() {
 
       return $parametersArgs;
     }
-    
+
     // Genera el formulario "Botón" de pago
-    public function generate_tpaga_form( $orderId ){     
+    public function generate_tpaga_form( $orderId ){
       $parametersArgs = $this->get_params_post( $orderId );
-      
+
       $tpagaArgs = array();
       foreach( $parametersArgs as $key => $value ){
         $tpagaArgs[] = $key . '=' . $value;
@@ -181,15 +181,15 @@ function woocommerce_tpaga_gateway() {
 
       // Url de Tpaga dependiendo del ambiente en el que nos encontremos
       $environment = ( $this->test == "yes" ) ? 'TRUE' : 'FALSE';
-      $this->environment_url = ( "FALSE" == $environment ) 
-                           ? 'http://tpaga-webcheckout.herokuapp.com/checkout'
-                           : 'http://localhost:3000/checkout';
+      $this->environment_url = ( "FALSE" == $environment )
+                           ? 'http://webcheckout.tpaga.co/checkout'
+                           : 'http://staging.webcheckout.tpaga.co/checkout';
 
       // Escribimos en el navegador nuestro botón
-      return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpagaArgs) 
+      return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpagaArgs)
         . '<input type="submit" id="submit_tpaga" value="' .__('Pagar', 'tpaga').'" /></form>';
     }
-    
+
     // Procesa el pago e informa a WC del mismo.
     function process_payment( $orderId ) {
       global $woocommerce;
@@ -206,21 +206,21 @@ function woocommerce_tpaga_gateway() {
                      add_query_arg( 'key', $order->order_key, get_permalink( get_option('woocommerce_pay_page_id'))))
                     );
       } else {
-      
+
         $parametersArgs = $this->get_params_post( $orderId );
-        
+
         $tpagaArgs = array();
         foreach($parametersArgs as $key => $value){
           $tpagaArgs[] = $key . '=' . $value;
         }
-      
+
         return array(
           'result' => 'success',
           'redirect' =>  $order->get_checkout_payment_url( true )
         );
       }
     }
-    
+
     // Retorna el secreto del vendedor actual
     function find_merchant_secret() {
       return $this->settings['merchant_secret'];

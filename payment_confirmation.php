@@ -56,7 +56,7 @@ if ($recievedSignature == $signature) {
         <td><?php echo $description; ?></td>
       </tr>
       <tr align="right">
-        <td>Metodo de pago</td>
+        <td>M&eacute;dio de pago</td>
         <td><?php echo $paymentMethod; ?></td>
       </tr>
     </table>

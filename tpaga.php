@@ -58,7 +58,7 @@ function woocommerce_tpaga_gateway() {
         add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
       }
 
-      add_action('woocommerce_receipt_tpaga', array(&$this, 'receipt_page'));
+      add_action( 'woocommerce_receipt_tpaga', array(&$this, 'receipt_page') );
     }
 
     // Formulario de configuración Tpaga WebCheckout
@@ -115,7 +115,7 @@ function woocommerce_tpaga_gateway() {
     }
 
     // Muestra el botón de pago, que luego redirecciona a TW
-    function receipt_page($order){
+    function receipt_page( $order ){
       echo '<p>'.__('Gracias por su pedido, Hagá click en PAGAR para proceder con el pago.', 'tpaga').'</p>';
       echo $this -> generate_tpaga_form($order);
     }
@@ -125,7 +125,7 @@ function woocommerce_tpaga_gateway() {
       $order = new WC_Order( $orderId );
 
       $currency = get_woocommerce_currency();
-      $amount = number_format(($order -> get_total()), 2, '.', '');
+      $amount = number_format( ($order -> get_total() ), 2, '.', '');
 
       // Calcula la firma digital
       $signature = hash('sha256', $this -> merchant_token . round($amount, 0) . $order -> id . $this -> merchant_secret);
@@ -182,8 +182,8 @@ function woocommerce_tpaga_gateway() {
       // Url de Tpaga dependiendo del ambiente en el que nos encontremos
       $environment = ( $this->test == "yes" ) ? 'TRUE' : 'FALSE';
       $this->environment_url = ( "FALSE" == $environment )
-                           ? 'http://webcheckout.tpaga.co/checkout'
-                           : 'http://staging.webcheckout.tpaga.co/checkout';
+                           ? 'https://webcheckout.tpaga.co/checkout'
+                           : 'https://staging.webcheckout.tpaga.co/checkout';
 
       // Escribimos en el navegador nuestro botón
       return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpagaArgs)

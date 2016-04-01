@@ -26,7 +26,7 @@ $signature = hash('sha256', $message);
 if ($recievedSignature == $signature) {
   $order = new WC_Order($purchaseOrderId);
   // Test the code to know if the transaction went through or not.
-  if ($paymentState == 'paid' && $responseMessage == 'Successful payment process!'){
+  if ($paymentState == 'paid'){
     $order->add_order_note( __( 'Pago satisfactorio.', 'tpaga' ) );
     $order->payment_complete();
     echo $responseMessage;

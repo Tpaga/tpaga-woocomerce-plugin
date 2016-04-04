@@ -27,11 +27,13 @@ if ($recievedSignature == $signature) {
   $order = new WC_Order($purchaseOrderId);
   // Test the code to know if the transaction went through or not.
   if ($paymentState == 'paid'){
-    $order->add_order_note( __( 'Pago satisfactorio.', 'tpaga' ) );
+    $order->add_order_note( __( 'Pago satisfactorio por medio de.', 'tpaga' ) );
     $order->payment_complete();
     echo $responseMessage;
   } else{
     wc_add_notice( $responseMessage, 'error');
-    $order->add_order_note('Error: ' . $responseMessage);
+    $order->add_order_note('Error mientras se procesaba el pago, con estado: Payment ' . $responseMessage);
+    $order->update_status('failed', __('Transaccion fallida. ', 'woothemes'));
+    echo $responseMessage;
   }
 }

@@ -96,12 +96,12 @@ function woocommerce_tpaga_gateway() {
           'title' => __('URI de respuesta'),
           'type' => 'text',
           'description' => __('URL de la página mostrada al finalizar el pago.', 'tpaga'),
-          'default' => __('http://cambiame.com/wp-content/plugins/woocommerce-tpaga/process_response.php', 'tpaga')),
+          'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/process_response.php', 'tpaga')),
           'confirmation_page' => array(
           'title' => __('Página de confirmación'),
           'type' => 'text',
           'description' => __('URL de la página que recibe la respuesta sobre los pagos.', 'tpaga'),
-          'default' => __('http://cambiame.com/wp-content/plugins/woocommerce-tpaga/confirmation.php', 'tpaga')
+          'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/confirmation.php', 'tpaga')
         )
       );
     }
@@ -183,7 +183,7 @@ function woocommerce_tpaga_gateway() {
       $environment = ( $this->test == "yes" ) ? 'TRUE' : 'FALSE';
       $this->environment_url = ( "FALSE" == $environment )
                            ? 'https://webcheckout.tpaga.co/checkout'
-                           : 'https://staging.webcheckout.tpaga.co/checkout';
+                           : 'https://tpaga-webcheckout.herokuapp.com/checkout';
 
       // Escribimos en el navegador nuestro botón
       return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpagaArgs)

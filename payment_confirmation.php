@@ -52,7 +52,7 @@ if ($recievedSignature == $signature) {
         <td><?php echo $currency; ?></td>
       </tr>
       <tr align="right">
-        <td>Descripción</td>/
+        <td>Descripción</td>
         <td><?php echo $description; ?></td>
       </tr>
       <tr align="right">

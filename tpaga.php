@@ -93,15 +93,15 @@ function woocommerce_tpaga_gateway() {
           'default' => 'no'
         ),
         'response_page' => array(
-          'title' => __('URI de respuesta'),
+          'title' => __('URI donde Tpaga actualizará el estado del pago.'),
           'type' => 'text',
           'description' => __('URL de la página mostrada al finalizar el pago.', 'tpaga'),
           'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/process_response.php', 'tpaga')),
           'confirmation_page' => array(
-          'title' => __('Página de confirmación'),
+          'title' => __('Página de confirmación (Donde el usuario verá el resumen del pago).'),
           'type' => 'text',
           'description' => __('URL de la página que recibe la respuesta sobre los pagos.', 'tpaga'),
-          'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/confirmation.php', 'tpaga')
+          'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/payment_confirmation.php', 'tpaga')
         )
       );
     }

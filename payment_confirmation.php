@@ -45,7 +45,7 @@ if ($recievedSignature == $signature) {
       </tr>
       <tr align="right">
         <td>Valor total</td>
-        <td>$<?php echo $purchaseAmount; ?> </td>
+        <td>$ <?php echo $purchaseAmount; ?> </td>
       </tr>
       <tr align="right">
         <td>Moneda</td>

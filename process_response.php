@@ -27,7 +27,7 @@ if ($recievedSignature == $signature) {
   $order = new WC_Order($purchaseOrderId);
   // Test the code to know if the transaction went through or not.
   if ($paymentState == 'paid'){
-    $order->add_order_note( __( 'Pago satisfactorio por medio de.', 'tpaga' ) );
+    $order->add_order_note( __( 'Pago satisfactorio por medio de Tpaga.', 'tpaga' ) );
     $order->payment_complete();
     echo $responseMessage;
   } else{

@@ -183,7 +183,7 @@ function woocommerce_tpaga_gateway() {
       $environment = ( $this->test == "yes" ) ? 'TRUE' : 'FALSE';
       $this->environment_url = ( "FALSE" == $environment )
                            ? 'https://webcheckout.tpaga.co/checkout'
-                           : 'https://tpaga-webcheckout.herokuapp.com/checkout';
+                           : 'https://staging.webcheckout.tpaga.co/checkout';
 
       // Escribimos en el navegador nuestro botón
       return '<form action="'.$this->environment_url.'" method="post" id="tpaga_form">' . implode('', $tpagaArgs)

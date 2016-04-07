@@ -4,7 +4,8 @@ require_once './tpaga.php';
 get_header('shop');
 
 if( $_REQUEST['signature'] === 'customererror' ){
-  echo '<h1><center>' . $_REQUEST['payment_message'] . '</center></h1>';
+  $siteUrl = get_permalink( woocommerce_get_page_id( 'shop' ) );
+  echo '<div style="padding-bottom: 14rem; padding-top: 10rem;"><h1><center>' . $_REQUEST['payment_message'] . '</h1><p style="text-align: center;"><a href="' . $siteUrl . '"> Volver </a></p></center>';
 }else{
   showResponse();
 }
@@ -74,6 +75,7 @@ function showResponse(){
   } else {
     echo '<h1><center>La petici&oacute;n es incorrecta! Hay un error en la firma.</center></h1>';
   }
+
 }
 
 get_footer('shop');

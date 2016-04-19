@@ -6,7 +6,7 @@ Tpaga WebCheckout es un servicio de Tpaga con el cual sus clientes podrán reali
 
 ### Requerimientos mínimos
 
- - Wordpress 4.4.2
+ - Wordpress 4.4.2 (Probado 4.5)
  - WooCommerce 2.0 ó posterior
 
 ### Integración del plugin con Wordpress
@@ -18,8 +18,6 @@ Debido a que este plugin es una extensión de [Woocomerce](https://www.woothemes
 4. En el formulario deberá activar a Tpaga como medio de pago.
 5. Los campos `Merchant Token` y `Secret` son generados al registrase en Tpaga WebCheckout
 6. Si desea hacer transacciones de prueba seleccione el botón `Transacciones en modo de prueba`.
-7. `URI de respuesta` corresponde a la URI del endpoint a el cual Tpaga responde con el estado de la transaccion.
-8. `Página de confirmación` es la página de confirmación que verán sus clientes una vez el proceso se complete.
 
 Con esta breve configuración usted esta listo para hacer cobros utilizando Tpaga WebCheckout.
 

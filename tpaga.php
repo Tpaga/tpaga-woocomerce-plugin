@@ -47,8 +47,6 @@ function woocommerce_tpaga_gateway() {
       $this->environment_url = '';
       $this->merchant_secret = $this->get_option( 'merchant_secret' );
       $this->test = $this->get_option( 'test' );
-      $this->response_page = $this->get_option( 'response_page' );
-      $this->confirmation_page = $this->get_option( 'confirmation_page' );
 
       // Guarda las opciones administrativas de acuerdo a la version de WC
       // 'process_admin_options' es un metodo de WC
@@ -91,17 +89,6 @@ function woocommerce_tpaga_gateway() {
           'type' => 'checkbox',
           'label' => __('Habilita las transacciones en modo de prueba.', 'tpaga'),
           'default' => 'no'
-        ),
-        'response_page' => array(
-          'title' => __('URI donde Tpaga actualizará el estado del pago.'),
-          'type' => 'text',
-          'description' => __('URL de la página mostrada al finalizar el pago.', 'tpaga'),
-          'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/process_response.php', 'tpaga')),
-          'confirmation_page' => array(
-          'title' => __('Página de confirmación (Donde el usuario verá el resumen del pago).'),
-          'type' => 'text',
-          'description' => __('URL de la página que recibe la respuesta sobre los pagos.', 'tpaga'),
-          'default' => __('http://cambiame.com/wp-content/plugins/tpaga-woocomerce-plugin/payment_confirmation.php', 'tpaga')
         )
       );
     }

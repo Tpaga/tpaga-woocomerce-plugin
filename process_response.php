@@ -29,7 +29,9 @@ if ($recievedSignature == $signature) {
   if ($paymentState == 'paid'){
     $order->add_order_note( __( 'Pago satisfactorio por medio de Tpaga.', 'tpaga' ) );
     $order->payment_complete();
-    echo $responseMessage;
+
+    // Marca la orden como completa automáticamente
+    $tpaga->autocomplete($order);
   } else{
     wc_add_notice( $responseMessage, 'error');
     $order->add_order_note('Error mientras se procesaba el pago, con estado: Payment ' . $responseMessage);

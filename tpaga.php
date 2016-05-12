@@ -7,9 +7,7 @@ Version: 1.0
 Author: Tpaga
 Author URI: http://www.tpaga.co/
 GitHub Plugin URI: https://github.com/Tpaga/tpaga-woocomerce-plugin
-License: Apache License 2.0.
-License URI: http://www.apache.org/licenses/LICENSE-2.0
-*/
+License: Apache License 2.0.  License URI: http://www.apache.org/licenses/LICENSE-2.0 */
 
 add_action('plugins_loaded', 'woocommerce_tpaga_gateway', 0);
 function woocommerce_tpaga_gateway() {
@@ -29,8 +27,7 @@ function woocommerce_tpaga_gateway() {
       $this->icon = apply_filters('woocomerce_tpaga_icon', plugins_url('/img/tpaga-logo.png', __FILE__));
 
       // Bool. Puede ser configurada con true si se esta haciendo una integración directa.
-      // este no es nuestro caso, ya el proceso se terminará por medio de un tercero
-      $this->has_fields     = false;
+      // este no es nuestro caso, ya el proceso se terminará por medio de un tercero $this->has_fields     = false;
       $this->method_title     = 'Tpaga';
       $this->method_description = 'Integración de Woocommerce con Tpaga Web checkout';
 
@@ -47,6 +44,7 @@ function woocommerce_tpaga_gateway() {
       $this->environment_url = '';
       $this->merchant_secret = $this->get_option( 'merchant_secret' );
       $this->test = $this->get_option( 'test' );
+      $this->autocomplete = $this->get_option( 'autocomplete' );
 
       // Guarda las opciones administrativas de acuerdo a la version de WC
       // 'process_admin_options' es un metodo de WC
@@ -88,6 +86,12 @@ function woocommerce_tpaga_gateway() {
           'title' => __('Transacciones en modo de prueba', 'tpaga'),
           'type' => 'checkbox',
           'label' => __('Habilita las transacciones en modo de prueba.', 'tpaga'),
+          'default' => 'no'
+        ),
+        'autocomplete' => array(
+          'title' => __('Autocompletar órdenes', 'tpaga'),
+          'type' => 'checkbox',
+          'label' => __('Habilita el autocompletado de la orden luego de recibir el pago.', 'tpaga'),
           'default' => 'no'
         )
       );
@@ -140,13 +144,11 @@ function woocommerce_tpaga_gateway() {
         'customer_firstname' => $order->billing_first_name,
         'customer_lastname' => $order->billing_last_name,
         'customer_phone' => $order->billing_phone,
-        'customer_cellphone' => $order->billing_phone,
         'customer_email' => $order->billing_email,
         'address_street' => $order->shipping_address_1,
         'address_city' => $order->shipping_city,
         'address_country' => $order->shipping_country,
-        'address_state' => $order->billing_state,
-        'address_postal_code' => $order->billing_postcode,
+        'address_state' => $order->billing_state
       );
 
       return $parametersArgs;
@@ -211,6 +213,13 @@ function woocommerce_tpaga_gateway() {
     // Retorna el secreto del vendedor actual
     function find_merchant_secret() {
       return $this->settings['merchant_secret'];
+    }
+
+    // Autocompleta la orden si el admin seleccionó dicha opción
+    function autocomplete($order) {
+      if( $this->autocomplete == 'yes' ){
+        $order->update_status('Completed');
+      }
     }
   }
 

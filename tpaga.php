@@ -3,7 +3,7 @@
 Plugin Name: Tpaga Web Checkout para WooCommerce
 Plugin URI: http://www.tpaga.co/
 Description: Agrega Tpaga WebCheckout como metodo de pago.
-Version: 1.0
+Version: 1.02
 Author: Tpaga
 Author URI: http://www.tpaga.co/
 GitHub Plugin URI: https://github.com/Tpaga/tpaga-woocomerce-plugin
@@ -116,10 +116,10 @@ function woocommerce_tpaga_gateway() {
       $order = new WC_Order( $orderId );
 
       $currency = get_woocommerce_currency();
-      $amount = number_format( ($order -> get_total() ), 2, '.', '');
+      $amount = number_format( ($order -> get_total() ), 1, '.', '');
 
       // Calcula la firma digital
-      $signature = hash('sha256', $this -> merchant_token . round($amount, 0) . $order -> id . $this -> merchant_secret);
+      $signature = hash('sha256', $this -> merchant_token . $amount . $order -> id . $this -> merchant_secret);
       $description = "";
 
       // Obtiene los items del carrito de compras
@@ -137,7 +137,7 @@ function woocommerce_tpaga_gateway() {
         'merchant_token' => $this->merchant_token,
         'purchase_order_id' => $order -> id,
         'purchase_description' => trim($description, ','),
-        'purchase_amount' => round($amount, 0),
+        'purchase_amount' => $amount,
         'purchase_tax' => $tax,
         'purchase_signature' => $signature,
         'purchase_currency' => $currency,

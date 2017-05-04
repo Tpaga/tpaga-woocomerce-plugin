@@ -218,7 +218,7 @@ function woocommerce_tpaga_gateway() {
     // Autocompleta la orden si el admin seleccionó dicha opción
     function autocomplete($order) {
       if( $this->autocomplete == 'yes' ){
-        $order->update_status('Completed');
+        $order->update_status('completed');
       }
     }
   }

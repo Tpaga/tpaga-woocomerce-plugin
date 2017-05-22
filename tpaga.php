@@ -145,8 +145,8 @@ function woocommerce_tpaga_gateway() {
         'customer_lastname' => $order->billing_last_name,
         'customer_phone' => $order->billing_phone,
         'customer_email' => $order->billing_email,
-        'address_street' => $order->shipping_address_1,
-        'address_city' => $order->shipping_city,
+        'address_street' => $order->billing_address_1,
+        'address_city' => $order->billing_city,
         'address_country' => $order->shipping_country,
         'address_state' => $order->billing_state
       );

@@ -22,11 +22,12 @@ add_action( 'woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_
 // Our hooked in function - $fields is passed via the filter
 function custom_override_checkout_fields( $fields ) {
      $fields['billing']['billing_customer_dni'] = array(
-        'label'     => __('Cédula', 'woocommerce'),
-        'placeholder'   => _x('Cédula', 'placeholder', 'woocommerce'),
+        'label'     => __('Documento de identidad', 'woocommerce'),
+        'placeholder'   => _x('Documento de identidad', 'placeholder', 'woocommerce'),
         'required'  => true,
         'class'     => array('form-row-wide'),
-        'clear'     => true
+        'clear'     => true,
+        'type' => 'number'
      );
 
      return $fields;
@@ -34,7 +35,7 @@ function custom_override_checkout_fields( $fields ) {
 
 
 function my_custom_checkout_field_display_admin_order_meta($order){
-    echo '<p><strong>'.__('Cédula').':</strong> ' . get_post_meta( $order->id, '_billing_customer_dni', true ) . '</p>';
+    echo '<p><strong>'.__('Documento de identidad').':</strong> ' . get_post_meta( $order->id, '_billing_customer_dni', true ) . '</p>';
 }
 
 

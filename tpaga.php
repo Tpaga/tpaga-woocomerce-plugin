@@ -10,6 +10,41 @@ GitHub Plugin URI: https://github.com/Tpaga/tpaga-woocomerce-plugin
 License: Apache License 2.0.  License URI: http://www.apache.org/licenses/LICENSE-2.0 */
 
 add_action('plugins_loaded', 'woocommerce_tpaga_gateway', 0);
+
+// Hook in. Adds a custom field to the Checkout form
+add_filter( 'woocommerce_checkout_fields' , 'custom_override_checkout_fields' );
+/* Display field value on the order edit page */
+add_action( 'woocommerce_admin_order_data_after_billing_address', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
+/* Update the order meta with field value  */
+add_action( 'woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_update_order_meta' );
+
+
+// Our hooked in function - $fields is passed via the filter
+function custom_override_checkout_fields( $fields ) {
+     $fields['billing']['billing_customer_dni'] = array(
+        'label'     => __('Cédula', 'woocommerce'),
+        'placeholder'   => _x('Cédula', 'placeholder', 'woocommerce'),
+        'required'  => true,
+        'class'     => array('form-row-wide'),
+        'clear'     => true
+     );
+
+     return $fields;
+}
+
+
+function my_custom_checkout_field_display_admin_order_meta($order){
+    echo '<p><strong>'.__('Cédula').':</strong> ' . get_post_meta( $order->id, '_billing_customer_dni', true ) . '</p>';
+}
+
+
+function my_custom_checkout_field_update_order_meta( $order_id ) {
+    if ( ! empty( $_POST['customer_dni'] ) ) {
+        update_post_meta( $order_id, '_customer_dni', sanitize_text_field( $_POST['customer_dni'] ) );
+    }
+}
+
+
 function woocommerce_tpaga_gateway() {
   // Verifica que woocomerce este instalado
   if(!class_exists('WC_Payment_Gateway')) return;
